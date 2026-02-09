@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - إكزو مانجا</title>
+    <link rel="icon" type="image/jpeg" href="images/favicon.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D4AF37', // Gold
+                        secondary: '#1a1a1a', // Darker Gray
+                        accent: '#FFD700', // Bright Gold
+                        darkbg: '#0a0a0a', // Very Dark Black/Gray
+                        cardbg: '#141414', // Slightly lighter for cards
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-darkbg text-gray-100 font-cairo">
+
+    <!-- Navigation -->
+    <nav class="bg-cardbg/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-700">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3 group">
+                <img src="images/logo.jpg" alt="Ekzo Team"
+                    class="h-10 w-auto object-contain group-hover:scale-105 transition">
+                <span class="text-2xl font-black text-primary tracking-wider uppercase"
+                    style="font-family: 'Cairo', sans-serif;">EkzoManga</span>
+            </a>
+            <div class="flex gap-4 items-center">
+                <span class="text-sm font-bold hidden md:block">مرحباً، <span id="nav-username">المستخدم</span></span>
+                <img src="https://via.placeholder.com/40" alt="Avatar"
+                    class="w-10 h-10 rounded-full border-2 border-primary" id="nav-avatar">
+                <a href="/auth/logout"
+                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm font-bold transition">خروج</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8 flex flex-col md:flex-row gap-8">
+
+        <!-- Sidebar Menu -->
+        <aside class="w-full md:w-1/4">
+            <div class="bg-cardbg rounded-xl p-6 shadow-lg sticky top-24">
+                <div class="text-center mb-6">
+                    <img src="https://via.placeholder.com/100" alt="Profile"
+                        class="w-24 h-24 rounded-full mx-auto border-4 border-primary mb-4" id="sidebar-avatar">
+                    <h2 class="text-xl font-bold" id="sidebar-username">اسم المستخدم</h2>
+                    <span class="text-xs bg-gray-700 px-2 py-1 rounded text-gray-300 mt-2 inline-block"
+                        id="sidebar-role">قارئ</span>
+                </div>
+                <nav class="space-y-2">
+                    <button onclick="showSection('favorites')"
+                        class="w-full text-right px-4 py-3 rounded hover:bg-white/5 transition flex items-center gap-3 text-primary bg-white/5 font-bold">
+                        <span>❤️</span> مفضلاتي
+                    </button>
+                    <button onclick="showSection('settings')"
+                        class="w-full text-right px-4 py-3 rounded hover:bg-white/5 transition flex items-center gap-3">
+                        <span>⚙️</span> الإعدادات
+                    </button>
+                    <div id="cms-actions" class="hidden">
+                        <button onclick="showSection('create-manga')"
+                            class="w-full text-right px-4 py-3 rounded hover:bg-white/5 transition flex items-center gap-3">
+                            <span>➕</span> إنشاء سلسلة جديدة
+                        </button>
+                        <button onclick="showSection('upload-chapter')"
+                            class="w-full text-right px-4 py-3 rounded hover:bg-white/5 transition flex items-center gap-3">
+                            <span>📤</span> رفع فصل جديد
+                        </button>
+                    </div>
+                    <button onclick="showSection('profile')"
+                        class="w-full text-right px-4 py-3 rounded hover:bg-white/5 transition flex items-center gap-3">
+                        <span>👤</span> الملف الشخصي
+                    </button>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="w-full md:w-3/4">
+
+            <!-- Favorites Section -->
+            <section id="favorites" class="space-y-6">
+                <h2 class="text-2xl font-bold border-r-4 border-accent pr-4 mb-6">مفضلاتي</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- Placeholder Favorite Item -->
+                    <div class="bg-cardbg rounded-xl overflow-hidden shadow-lg group">
+                        <div class="aspect-[2/3] relative overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1620336655055-088d06e36bf0?q=80&w=1887&auto=format&fit=crop"
+                                class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                            <div
+                                class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                <button
+                                    class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">إزالة</button>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold truncate">ون بيس</h3>
+                            <p class="text-gray-400 text-xs mt-1">آخر فصل: 1109</p>
+                        </div>
+                    </div>
+                    <!-- Placeholder Favorite Item -->
+                    <div class="bg-cardbg rounded-xl overflow-hidden shadow-lg group">
+                        <div class="aspect-[2/3] relative overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1541562232579-512a21360020?q=80&w=1887&auto=format&fit=crop"
+                                class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                            <div
+                                class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                <button
+                                    class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">إزالة</button>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold truncate">جوجوتسو كايسن</h3>
+                            <p class="text-gray-400 text-xs mt-1">آخر فصل: 252</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Create Manga Section (Publisher) -->
+            <section id="create-manga" class="hidden space-y-6">
+                <h2 class="text-2xl font-bold border-r-4 border-accent pr-4 mb-6">إنشاء سلسلة جديدة</h2>
+                <div class="bg-cardbg rounded-xl p-8 shadow-lg">
+                    <form id="create-manga-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold mb-2">العنوان</label>
+                            <input type="text" name="title" required
+                                class="w-full bg-darkbg border border-gray-700 rounded px-4 py-3 focus:border-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-2">المؤلف</label>
+                            <input type="text" name="author"
+                                class="w-full bg-darkbg border border-gray-700 rounded px-4 py-3 focus:border-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-2">رابط غلاف الصورة</label>
+                            <input type="text" name="coverImage"
+                                class="w-full bg-darkbg border border-gray-700 rounded px-4 py-3 focus:border-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-2">الوصف</label>
+                            <textarea name="description"
+                                class="w-full bg-darkbg border border-gray-700 rounded px-4 py-3 focus:border-primary outline-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-2">الحالة</label>
+                            <select name="status"
+                                class="w-full bg-darkbg border border-gray-700 rounded px-4 py-3 focus:border-primary outline-none">
+                                <option value="ongoing">مستمر</option>
+                                <option value="completed">مكتمل</option>
+                            </select>
+                        </div>
+                        <button type="submit"
+                            class="bg-primary hover:bg-blue-600 text-white px-6 py-3 rounded font-bold">إنشاء
+                            السلسلة</button>
+                    </form>
+                    <div id="create-manga-msg" class="mt-4 text-sm"></div>
+                </div>
+            </section>
+
+            <!-- Upload Chapter Section (Publisher) -->
+            <section id="upload-chapter" class="hidden space-y-6">
+                <h2 class="text-2xl font-bold border-r-4 border-accent pr-4 mb-6">رفع فصل جديد</h2>
+                <div class="bg-cardbg rounded-xl p-8 shadow-lg">
+                    <form id="upload-chapter-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold mb-2">معرّف المانجا (ID)</label>
+                            <input type="text" name="mangaId" required
+                                class="w-full bg-darkbg border border-gray-700 rounded px-4 py-3 focus:border-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-2">عنوان الفصل</label>
+                            <input type="text" name="title" required
+                                class="w-full bg-darkbg border border-gray-700 rounded px-4 py-3 focus:border-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-2">رقم الفصل</label>
+                            <input type="number" name="chapterNumber" required
+                                class="w-full bg-darkbg border border-gray-700 rounded px-4 py-3 focus:border-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-2">روابط الصفحات (JSON array)</label>
+                            <textarea name="pages" placeholder='["https://...","https://..."]'
+                                class="w-full bg-darkbg border border-gray-700 rounded px-4 py-3 focus:border-primary outline-none"></textarea>
+                        </div>
+                        <button type="submit"
+                            class="bg-primary hover:bg-blue-600 text-white px-6 py-3 rounded font-bold">رفع
+                            الفصل</button>
+                    </form>
+                    <div id="upload-chapter-msg" class="mt-4 text-sm"></div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="hidden space-y-6">
+                <h2 class="text-2xl font-bold border-r-4 border-primary pr-4 mb-6">إعدادات الحساب</h2>
+                <div class="bg-cardbg rounded-xl p-8 shadow-lg">
+                    <form class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-bold mb-2">اسم العرض</label>
+                            <input type="text" value="اسم المستخدم"
+                                class="w-full bg-darkbg border border-gray-700 rounded px-4 py-3 focus:border-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-2">رابط الصورة الرمزية</label>
+                            <input type="text" value="https://via.placeholder.com/150"
+                                class="w-full bg-darkbg border border-gray-700 rounded px-4 py-3 focus:border-primary outline-none">
+                        </div>
+                        <button type="button"
+                            class="bg-primary hover:bg-blue-600 text-white px-6 py-3 rounded font-bold transition">حفظ
+                            التغييرات</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profile" class="hidden space-y-6">
+                <h2 class="text-2xl font-bold border-r-4 border-green-500 pr-4 mb-6">الملف الشخصي</h2>
+                <div class="bg-cardbg rounded-xl p-8 shadow-lg text-center">
+                    <p class="text-gray-400">لا توجد أعمال منشورة حالياً.</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        function showSection(id) {
+            // Hide all sections
+            document.querySelectorAll('main > section').forEach(el => el.classList.add('hidden'));
+            // Remove active class from buttons
+            document.querySelectorAll('aside nav button').forEach(el => {
+                el.classList.remove('bg-white/5', 'text-primary', 'font-bold');
+            });
+
+            // Show selected section
+            document.getElementById(id).classList.remove('hidden');
+
+            // Add active class to clicked button (simple logic matching order)
+            // Ideally use event.target or ID matching for buttons
+            const btnIndex = ['favorites', 'settings', 'profile'].indexOf(id);
+            if (btnIndex >= 0) {
+                const btn = document.querySelectorAll('aside nav button')[btnIndex];
+                btn.classList.add('bg-white/5', 'text-primary', 'font-bold');
+            }
+        }
+
+        // Fetch current user data and populate dashboard
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('/auth/current_user');
+                const data = await res.json();
+
+                if (!data.isLoggedIn) return;
+
+                const user = data.user;
+                document.getElementById('sidebar-username').textContent = user.displayName || 'المستخدم';
+                document.getElementById('sidebar-avatar').src = user.image || 'https://via.placeholder.com/100';
+                document.getElementById('nav-username') && (document.getElementById('nav-username').textContent = user.displayName);
+                document.getElementById('nav-avatar') && (document.getElementById('nav-avatar').src = user.image || 'https://via.placeholder.com/40');
+                document.getElementById('sidebar-role').textContent = (user.role === 'publisher') ? 'رافع/ناشر' : ((user.role === 'admin') ? 'مشرف' : 'قارئ');
+
+                // Show CMS actions for publisher/admin
+                if (['publisher', 'admin'].includes(user.role)) {
+                    document.getElementById('cms-actions').classList.remove('hidden');
+                }
+
+                // Load favorites
+                const profileRes = await fetch('/user/dashboard');
+                if (profileRes.ok) {
+                    const profile = await profileRes.json();
+                    const favContainer = document.querySelector('#favorites .grid');
+                    if (profile.favorites && profile.favorites.length) {
+                        favContainer.innerHTML = '';
+                        profile.favorites.forEach(m => {
+                            const div = document.createElement('div');
+                            div.className = 'bg-cardbg rounded-xl overflow-hidden shadow-lg group';
+                            div.innerHTML = `
+                                <div class="aspect-[2/3] relative overflow-hidden">
+                                    <img src="${m.coverImage || 'https://via.placeholder.com/250'}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                        <button data-id="${m._id}" class="remove-fav bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">إزالة</button>
+                                    </div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-bold truncate">${m.title}</h3>
+                                    <p class="text-gray-400 text-xs mt-1">آخر فصل: ${m.latestChapter || '-'}</p>
+                                </div>
+                            `;
+                            favContainer.appendChild(div);
+                        });
+
+                        // Attach remove handlers
+                        document.querySelectorAll('.remove-fav').forEach(btn => {
+                            btn.addEventListener('click', async (e) => {
+                                const id = e.target.dataset.id;
+                                const resp = await fetch('/user/favorites/' + id, { method: 'PUT' });
+                                if (resp.ok) {
+                                    e.target.closest('.bg-cardbg').remove();
+                                }
+                            });
+                        });
+                    } else {
+                        // nothing
+                    }
+                }
+
+                // Handle create manga form
+                document.getElementById('create-manga-form') && document.getElementById('create-manga-form').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const form = e.target;
+                    // Arabic slug fallback
+                    const slug = form.title.value.trim().replace(/\s+/g, '-').replace(/[^\w\u0600-\u06FF-]+/g, '').toLowerCase();
+                    const body = {
+                        title: form.title.value,
+                        author: form.author.value,
+                        coverImage: form.coverImage.value,
+                        description: form.description.value,
+                        status: form.status.value,
+                        slug: slug
+                    };
+                    const resp = await fetch('/manga', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                    const msg = document.getElementById('create-manga-msg');
+                    if (resp.ok) {
+                        const json = await resp.json();
+                        msg.textContent = '✅ تم إنشاء السلسلة بنجاح. رقم المعرف: ' + json._id;
+                        form.reset();
+                    } else {
+                        msg.textContent = '❌ حدث خطأ أثناء إنشاء السلسلة';
+                    }
+                });
+
+                // Handle upload chapter form
+                document.getElementById('upload-chapter-form') && document.getElementById('upload-chapter-form').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const form = e.target;
+                    let pages = [];
+                    try { pages = JSON.parse(form.pages.value || '[]'); } catch (err) { document.getElementById('upload-chapter-msg').textContent = '❌ تنسيق روابط الصفحات غير صالح (استخدم JSON array)'; return; }
+                    const body = {
+                        title: form.title.value,
+                        chapterNumber: Number(form.chapterNumber.value),
+                        pages
+                    };
+                    const resp = await fetch('/manga/' + form.mangaId.value + '/chapters', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                    const msg = document.getElementById('upload-chapter-msg');
+                    if (resp.ok) {
+                        const json = await resp.json();
+                        msg.textContent = '✅ تم رفع الفصل بنجاح. رقم المعرف: ' + json._id;
+                        form.reset();
+                    } else {
+                        msg.textContent = '❌ حدث خطأ أثناء رفع الفصل';
+                    }
+                });
+
+            } catch (err) {
+                console.error('Dashboard init error', err);
+            }
+        });
+    </script>
+    <!-- Footer -->
+    <footer class="bg-secondary border-t border-gray-700 py-8 mt-12">
+        <div class="container mx-auto px-4 text-center text-gray-400 text-sm">
+            &copy; 2026 Ekzo Manga. جميع الحقوق محفوظة.
+        </div>
+    </footer>
+
+</body>
+
+</html>

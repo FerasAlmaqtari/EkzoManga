@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المقالات - إكزو مانجا</title>
+    <link rel="icon" type="image/jpeg" href="images/favicon.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D4AF37', // Gold
+                        secondary: '#1a1a1a', // Darker Gray
+                        accent: '#FFD700', // Bright Gold
+                        darkbg: '#0a0a0a', // Very Dark Black/Gray
+                        cardbg: '#141414', // Slightly lighter for cards
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-darkbg text-gray-100 font-cairo flex flex-col min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="bg-cardbg/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-700">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3 group">
+                <img src="images/logo.jpg" alt="Ekzo Team"
+                    class="h-10 w-auto object-contain group-hover:scale-105 transition">
+                <span class="text-2xl font-black text-primary tracking-wider uppercase"
+                    style="font-family: 'Cairo', sans-serif;">EkzoManga</span>
+            </a>
+            <div class="hidden md:flex gap-6 text-sm font-semibold">
+                <a href="index.html" class="hover:text-primary transition">الرئيسية</a>
+                <a href="articles.html" class="text-primary transition">المقالات</a>
+                <a href="contact.html" class="hover:text-primary transition">تواصل معنا</a>
+            </div>
+            <div class="flex gap-4 items-center" id="auth-buttons-container">
+                <!-- Content will be injected by JS -->
+                <a href="/auth/google"
+                    class="bg-primary hover:bg-yellow-500 text-black px-4 py-2 rounded-full text-sm font-bold transition shadow-lg">
+                    تسجيل الدخول
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12 flex-grow">
+        <div class="flex justify-between items-center mb-8 border-b border-gray-700 pb-4">
+            <h1 class="text-3xl font-bold border-r-4 border-primary pr-3">المقالات والأخبار</h1>
+        </div>
+
+        <div id="articles-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="col-span-full text-center py-12">
+                <p class="text-gray-500 text-xl animate-pulse">جاري تحميل المقالات...</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-secondary border-t border-gray-700 py-8 mt-auto">
+        <div class="container mx-auto px-4 text-center text-gray-400 text-sm">
+            &copy; 2026 Ekzo Manga. جميع الحقوق محفوظة.
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Auth Logic
+            const authContainer = document.getElementById('auth-buttons-container');
+            if (authContainer) {
+                try {
+                    const response = await fetch('/auth/current_user');
+                    const data = await response.json();
+
+                    if (data.isLoggedIn) {
+                        authContainer.innerHTML = `
+                            <a href="dashboard.html" class="bg-primary hover:bg-yellow-500 text-black px-4 py-2 rounded-full text-sm font-bold transition shadow-lg flex items-center gap-2">
+                                <span>👤</span> لوحة التحكم
+                            </a>
+                        `;
+                    } else {
+                        authContainer.innerHTML = `
+                             <a href="/auth/google" class="bg-primary hover:bg-yellow-500 text-black px-4 py-2 rounded-full text-sm font-bold transition shadow-lg shadow-yellow-500/20 flex items-center gap-2">
+                                <span>🔑</span> تسجيل الدخول
+                            </a>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Error checking auth:', error);
+                }
+            }
+
+            // Articles Fetch Logic
+            const container = document.getElementById('articles-container');
+
+            try {
+                const response = await fetch('/articles');
+                const articles = await response.json();
+
+                container.innerHTML = '';
+
+                if (articles.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-12">
+                            <p class="text-gray-500 text-lg">لا توجد مقالات منشورة حالياً.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                articles.forEach(article => {
+                    const date = new Date(article.createdAt).toLocaleDateString('ar-EG');
+                    const div = document.createElement('div');
+                    div.className = 'bg-cardbg rounded-xl overflow-hidden shadow-lg border border-gray-800 hover:border-primary/50 transition duration-300 group';
+                    div.innerHTML = `
+                        <div class="h-48 overflow-hidden">
+                            <img src="${article.coverImage}" alt="${article.title}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-center text-xs text-gray-500 mb-3">
+                                <span>${date}</span>
+                                <span class="text-primary">${article.author.displayName || 'مشرف'}</span>
+                            </div>
+                            <h2 class="text-xl font-bold mb-3 group-hover:text-primary transition line-clamp-2">${article.title}</h2>
+                            <p class="text-gray-400 text-sm line-clamp-3 mb-4">${article.content}</p>
+                            <a href="#" class="text-primary text-sm font-bold hover:underline">اقرأ المزيد &larr;</a>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = '<p class="text-red-500 text-center col-span-full">حدث خطأ أثناء تحميل المقالات.</p>';
+            }
+        });
+    </script>
+</body>
+
+</html>

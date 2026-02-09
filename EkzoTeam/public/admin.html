@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة المشرف - إكزو مانجا</title>
+    <link rel="icon" type="image/jpeg" href="images/favicon.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D4AF37', // Gold
+                        secondary: '#1a1a1a', // Darker Gray
+                        accent: '#FFD700', // Bright Gold
+                        darkbg: '#0a0a0a', // Very Dark Black/Gray
+                        cardbg: '#141414', // Slightly lighter for cards
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-darkbg text-gray-100 font-cairo">
+
+    <!-- Navigation -->
+    <nav class="bg-secondary/90 backdrop-blur-md sticky top-0 z-50 border-b border-primary">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3 group">
+                <img src="images/logo.jpg" alt="Ekzo Team Admin"
+                    class="h-10 w-auto object-contain group-hover:scale-105 transition">
+                <span class="text-xl font-black text-primary tracking-wider uppercase"
+                    style="font-family: 'Cairo', sans-serif;">EkzoManga</span>
+                <span class="text-xs text-primary font-bold border border-primary px-2 rounded ml-2">مشرف</span>
+            </a>
+            <div class="flex gap-4 items-center">
+                <a href="dashboard.html" class="text-sm font-bold text-gray-300 hover:text-white transition">لوحة
+                    المستخدم</a>
+                <a href="articles.html" class="text-sm font-bold text-gray-300 hover:text-white transition">المقالات</a>
+                <button id="logout-btn" class="text-red-500 hover:text-red-400 font-bold text-sm">تسجيل خروج</button>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="container mx-auto px-4 py-8">
+
+        <!-- Stats Cards -->
+        <h2 class="text-2xl font-bold mb-6 border-r-4 border-accent pr-4">إحصائيات الموقع</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-cardbg rounded-xl p-6 shadow-lg flex items-center justify-between border-b-4 border-primary">
+                <div>
+                    <h3 class="text-gray-400 font-bold mb-1">المستخدمين</h3>
+                    <p class="text-4xl font-black" id="stats-users">1,204</p>
+                </div>
+                <span class="text-4xl">👥</span>
+            </div>
+            <div
+                class="bg-cardbg rounded-xl p-6 shadow-lg flex items-center justify-between border-b-4 border-green-500">
+                <div>
+                    <h3 class="text-gray-400 font-bold mb-1">المانجا</h3>
+                    <p class="text-4xl font-black" id="stats-manga">85</p>
+                </div>
+                <span class="text-4xl">📚</span>
+            </div>
+            <div
+                class="bg-cardbg rounded-xl p-6 shadow-lg flex items-center justify-between border-b-4 border-yellow-500">
+                <div>
+                    <h3 class="text-gray-400 font-bold mb-1">التعليقات</h3>
+                    <p class="text-4xl font-black" id="stats-comments">3,420</p>
+                </div>
+                <span class="text-4xl">💬</span>
+            </div>
+        </div>
+
+        <!-- User Management -->
+        <h2 class="text-2xl font-bold mb-6 border-r-4 border-blue-500 pr-4">إدارة المستخدمين</h2>
+        <div class="bg-cardbg rounded-xl shadow-lg overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-right">
+                    <thead class="bg-gray-800 text-gray-400 text-sm uppercas">
+                        <tr>
+                            <th class="px-6 py-4">المستخدم</th>
+                            <th class="px-6 py-4">البريد الإلكتروني</th>
+                            <th class="px-6 py-4">الدور الحالي</th>
+                            <th class="px-6 py-4">تاريخ الانضمام</th>
+                            <th class="px-6 py-4 text-center">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-700 text-sm" id="users-table">
+                        <tr>
+                            <td colspan="5" class="px-6 py-6 text-center text-gray-400">جاري التحميل...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+    </div>
+
+    <script>
+        // Load admin stats & users
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('/admin/dashboard');
+                if (!res.ok) throw new Error('غير مصرح أو خطأ في الخادم');
+                const data = await res.json();
+
+                document.getElementById('stats-users').textContent = data.stats.users || 0;
+                document.getElementById('stats-manga').textContent = data.stats.manga || 0;
+                document.getElementById('stats-comments').textContent = data.stats.comments || 0;
+
+                const tbody = document.getElementById('users-table');
+                tbody.innerHTML = '';
+                data.users.forEach(u => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-white/5 transition';
+                    tr.innerHTML = `
+                        <td class="px-6 py-4 flex items-center gap-3">
+                            <img src="${u.image || 'https://via.placeholder.com/40'}" class="w-8 h-8 rounded-full">
+                            <span class="font-bold">${u.displayName}</span>
+                        </td>
+                        <td class="px-6 py-4 text-gray-300">${u.email}</td>
+                        <td class="px-6 py-4"><span class="px-2 py-1 rounded text-xs font-bold ${u.role === 'admin' ? 'bg-red-600/20 text-red-400' : (u.role === 'publisher' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-green-500/20 text-green-400')}">${u.role}</span></td>
+                        <td class="px-6 py-4 text-gray-400">${new Date(u.createdAt).toLocaleDateString()}</td>
+                        <td class="px-6 py-4 text-center">
+                            <select data-id="${u._id}" class="promote-select bg-darkbg border border-gray-700 rounded px-2 py-1 text-sm text-gray-200">
+                                <option value="reader">قارئ</option>
+                                <option value="publisher">رافع/ناشر</option>
+                                <option value="admin">مشرف</option>
+                            </select>
+                                <button data-id="${u._id}" class="promote-btn text-blue-400 hover:text-blue-300 font-bold ml-2">حفظ</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                    // localize badge and select display to Arabic
+                    (function (row, u) {
+                        const mapToArabic = { 'reader': 'قارئ', 'publisher': 'رافع/ناشر', 'admin': 'مشرف' };
+                        const badge = row.querySelector('td span');
+                        if (badge) badge.textContent = mapToArabic[u.role] || u.role;
+                        const sel = row.querySelector('select.promote-select');
+                        if (sel) sel.value = mapToArabic[u.role] || sel.value;
+                    })(tr, u);
+                });
+
+                // Attach promote handlers
+                document.querySelectorAll('.promote-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const id = e.target.dataset.id;
+                        const select = document.querySelector(`select[data-id='${id}']`);
+                        // map displayed Arabic label back to value
+                        const displayVal = select.value;
+                        const mapDisplayToValue = { 'قارئ': 'reader', 'رافع/ناشر': 'publisher', 'مشرف': 'admin' };
+                        const role = mapDisplayToValue[displayVal] || displayVal;
+                        const resp = await fetch('/admin/users/' + id + '/role', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role }) });
+                        if (resp.ok) {
+                            // update badge text to Arabic label
+                            const badge = e.target.closest('td').querySelector('span');
+                            const mapToArabic = { 'reader': 'قارئ', 'publisher': 'رافع/ناشر', 'admin': 'مشرف' };
+                            badge.textContent = mapToArabic[role] || role;
+                            alert('تم تحديث الدور');
+                        } else {
+                            alert('فشل التحديث');
+                        }
+                    });
+                });
+
+                // Logout button
+                document.getElementById('logout-btn').addEventListener('click', () => { window.location.href = '/auth/logout'; });
+
+            } catch (err) {
+                console.error('Admin load error', err);
+                // If unauthorized redirect
+                window.location.href = '/';
+            }
+        });
+    </script>
+    <!-- Footer -->
+    <footer class="bg-secondary border-t border-gray-700 py-8 mt-12">
+        <div class="container mx-auto px-4 text-center text-gray-400 text-sm">
+            &copy; 2026 Ekzo Manga. جميع الحقوق محفوظة.
+        </div>
+    </footer>
+
+</body>
+
+</html>

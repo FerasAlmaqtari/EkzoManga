@@ -1,0 +1,35 @@
+[build]
+  functions = "functions"
+  publish = "public"
+
+[dev]
+  framework = "#static"
+  command = "npm run dev"
+  targetPort = 5000
+  port = 8888
+  publish = "public"
+
+[[redirects]]
+  from = "/auth/*"
+  to = "/.netlify/functions/api/auth/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/manga/*"
+  to = "/.netlify/functions/api/manga/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/comments/*"
+  to = "/.netlify/functions/api/comments/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/user/*"
+  to = "/.netlify/functions/api/user/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/.netlify/functions/api/admin/:splat"
+  status = 200
