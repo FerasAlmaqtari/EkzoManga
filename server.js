@@ -19,7 +19,7 @@ const MongoStore = require('connect-mongo');
 // ... (other imports remain, but ensure path logic is correct)
 
 // Connect to Database (ensure this handles re-connection in serverless)
-connectDB();
+// connectDB already called above; avoid duplicate calls
 
 const app = express();
 
@@ -28,7 +28,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // Middleware
-app.use(cors());
+// Trust proxy when behind a TLS/forwarding proxy (set TRUST_PROXY=true in env)
+if (process.env.TRUST_PROXY === 'true' || process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1);
+}
+
+const corsOptions = {
+    origin: process.env.FRONTEND_ORIGIN || 'http://localhost:3000',
+    credentials: true,
+};
+app.use(cors(corsOptions));
 
 // Express Session with MongoStore
 app.use(session({
@@ -37,7 +46,9 @@ app.use(session({
     saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
     cookie: {
-        maxAge: 24 * 60 * 60 * 1000 // 1 day
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
     }
 }));
 
